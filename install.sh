@@ -66,12 +66,21 @@ container system start
 echo "Pulling the latest image: instavm/coderunner"
 container image pull instavm/coderunner
 
-echo "→ Ensuring coderunner assets directory…"
+echo "→ Ensuring coderunner assets directories…"
 ASSETS_SRC="$HOME/.coderunner/assets"
-mkdir -p "$ASSETS_SRC"
+mkdir -p "$ASSETS_SRC/skills/user"
+mkdir -p "$ASSETS_SRC/outputs"
 
 # Run the command to start the sandbox container
 echo "Running: container run --name coderunner --detach --rm --cpus 8 --memory 4g instavm/coderunner"
-container run  --volume "$ASSETS_SRC:/app/uploads" --name coderunner --detach --rm --cpus 8 --memory 4g instavm/coderunner
+container run \
+  --volume "$ASSETS_SRC/skills/user:/app/uploads/skills/user" \
+  --volume "$ASSETS_SRC/outputs:/app/uploads/outputs" \
+  --name coderunner \
+  --detach \
+  --rm \
+  --cpus 8 \
+  --memory 4g \
+  instavm/coderunner
 
 echo "✅ Setup complete. MCP server is available at http://coderunner.local:8222/mcp"
