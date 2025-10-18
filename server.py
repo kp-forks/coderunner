@@ -5,6 +5,7 @@ import binascii
 import json
 import logging
 import os
+import zipfile
 import pathlib
 import time
 import uuid
@@ -52,6 +53,11 @@ WEBSOCKET_PING_TIMEOUT = 10
 SHARED_DIR = pathlib.Path("/app/uploads")
 SHARED_DIR.mkdir(exist_ok=True)
 KERNEL_ID_FILE_PATH = SHARED_DIR / "python_kernel_id.txt"
+
+# Skills directory configuration
+SKILLS_DIR = SHARED_DIR / "skills"
+PUBLIC_SKILLS_DIR = SKILLS_DIR / "public"
+USER_SKILLS_DIR = SKILLS_DIR / "user"
 
 def resolve_with_system_dns(hostname):
     try:
@@ -528,6 +534,150 @@ async def navigate_and_get_all_visible_text(url: str) -> str:
         logger.error(f"Failed to retrieve all visible text: {e}")
         # An error occurred, return the final error message.
         return f"Error: Failed to retrieve all visible text: {str(e)}"
+
+
+# --- SKILLS MANAGEMENT TOOLS ---
+
+
+async def _parse_skill_frontmatter(skill_md_path):
+    try:
+        async with aiofiles.open(skill_md_path, mode='r') as f:
+            content = await f.read()
+            frontmatter = []
+            in_frontmatter = False
+            for line in content.splitlines():
+                if line.strip() == '---':
+                    if in_frontmatter:
+                        break
+                    else:
+                        in_frontmatter = True
+                        continue
+                if in_frontmatter:
+                    frontmatter.append(line)
+            
+            metadata = {}
+            for line in frontmatter:
+                if ':' in line:
+                    key, value = line.split(':', 1)
+                    metadata[key.strip()] = value.strip()
+            return metadata
+    except Exception:
+        return {}
+
+@mcp.tool()
+async def list_skills() -> str:
+    """
+    Lists all available skills in the CodeRunner container.
+
+    Returns a list of available skills organized by category (public/user).
+    Public skills are built into the container, while user skills are added by users.
+
+    Returns:
+        JSON string with skill names organized by category.
+    """
+    try:
+        # Unzip any user-provided skills
+        if USER_SKILLS_DIR.exists():
+            for item in USER_SKILLS_DIR.iterdir():
+                if item.is_file() and item.suffix == '.zip':
+                    with zipfile.ZipFile(item, 'r') as zip_ref:
+                        zip_ref.extractall(USER_SKILLS_DIR)
+                    os.remove(item)
+
+        skills = {
+            "public": [],
+            "user": []
+        }
+
+        # Helper to process a skills directory
+        async def process_skill_dir(directory, category):
+            if directory.exists():
+                for skill_dir in directory.iterdir():
+                    if skill_dir.is_dir():
+                        skill_md_path = skill_dir / "SKILL.md"
+                        if skill_md_path.exists():
+                            metadata = await _parse_skill_frontmatter(skill_md_path)
+                            skills[category].append({
+                                "name": metadata.get("name", skill_dir.name),
+                                "description": metadata.get("description", "No description available.")
+                            })
+
+        await process_skill_dir(PUBLIC_SKILLS_DIR, "public")
+        await process_skill_dir(USER_SKILLS_DIR, "user")
+
+        # Sort for consistent output
+        skills["public"].sort(key=lambda x: x['name'])
+        skills["user"].sort(key=lambda x: x['name'])
+
+        result = f"Available Skills:\n\n"
+        result += f"Public Skills ({len(skills['public'])}):\n"
+        if skills["public"]:
+            for skill in skills["public"]:
+                result += f"  - {skill['name']}: {skill['description']}\n"
+        else:
+            result += "  (none)\n"
+
+        result += f"\nUser Skills ({len(skills['user'])}):\n"
+        if skills["user"]:
+            for skill in skills["user"]:
+                result += f"  - {skill['name']}: {skill['description']}\n"
+        else:
+            result += "  (none)\n"
+
+        result += f"\nUse get_skill_info(skill_name) to read documentation for a specific skill."
+
+        return result
+
+    except Exception as e:
+        logger.error(f"Failed to list skills: {e}")
+        return f"Error: Failed to list skills: {str(e)}"
+
+
+@mcp.tool()
+async def get_skill_info(skill_name: str) -> str:
+    """
+    Retrieves the documentation (SKILL.md) for a specific skill.
+
+    Args:
+        skill_name: The name of the skill (e.g., 'pdf-text-replace', 'image-crop-rotate')
+
+    Returns:
+        The content of the skill's SKILL.md file with usage instructions and examples.
+    """
+    try:
+        # Check public skills first
+        public_skill_path = PUBLIC_SKILLS_DIR / skill_name / "SKILL.md"
+        user_skill_path = USER_SKILLS_DIR / skill_name / "SKILL.md"
+
+        skill_path = None
+        skill_type = None
+
+        if public_skill_path.exists():
+            skill_path = public_skill_path
+            skill_type = "public"
+        elif user_skill_path.exists():
+            skill_path = user_skill_path
+            skill_type = "user"
+        else:
+            return f"Error: Skill '{skill_name}' not found. Use list_skills() to see available skills."
+
+        # Read the SKILL.md content
+        async with aiofiles.open(skill_path, mode='r') as f:
+            content = await f.read()
+
+        # Replace all occurrences of /mnt/user-data with /app/uploads
+        content = content.replace('/mnt/user-data', '/app/uploads')
+
+        # Add header with skill type
+        header = f"Skill: {skill_name} ({skill_type})\n"
+        header += f"Location: /app/uploads/skills/{skill_type}/{skill_name}/\n"
+        header += "=" * 80 + "\n\n"
+
+        return header + content
+
+    except Exception as e:
+        logger.error(f"Failed to get skill info for '{skill_name}': {e}")
+        return f"Error: Failed to get skill info: {str(e)}"
 
 
 # Use the streamable_http_app as it's the modern standard

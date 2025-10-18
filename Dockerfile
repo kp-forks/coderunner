@@ -41,6 +41,16 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     libgbm1 \
     libxshmfence1 \
     libasound2 \
+    unzip \
+    p7zip-full \
+    bc \
+    ripgrep \
+    fd-find \
+    sqlite3 \
+    libsqlite3-dev \
+    wkhtmltopdf \
+    poppler-utils \
+    default-jre \
  && apt-get clean && rm -rf /var/lib/apt/lists/*
 
 
@@ -63,6 +73,12 @@ COPY ./server.py /app/server.py
 
 # Create application/jupyter directories
 RUN mkdir -p /app/uploads /app/jupyter_runtime
+
+# Copy skills directory structure into the container
+# Public skills are baked into the image
+# User skills directory is created as mount point for user-added skills
+COPY ./skills/public /app/uploads/skills/public
+RUN mkdir -p /app/uploads/skills/user
 
 # # Generate SSH host keys
 # RUN ssh-keygen -A
