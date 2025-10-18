@@ -97,6 +97,16 @@ EXPOSE 8222
 # Start the FastAPI application
 # CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8002", "--workers", "1", "--no-access-log"]
 
+RUN apt-get --fix-broken install
+# Ensure Node.js, npm (and npx) are set up
+RUN curl -fsSL https://deb.nodesource.com/setup_22.x | bash -
+RUN apt-get install -y nodejs
+
+
+
+ENV PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+RUN npm install playwright@1.53.0 -g
+RUN npx playwright@1.53.0 install
 
 # Copy the entrypoint script into the image
 COPY entrypoint.sh /entrypoint.sh
@@ -104,13 +114,9 @@ COPY entrypoint.sh /entrypoint.sh
 # Make the entrypoint script executable
 RUN chmod +x /entrypoint.sh
 
-# Ensure Node.js, npm (and npx) are set up
-RUN curl -fsSL https://deb.nodesource.com/setup_22.x | bash -
-RUN apt-get install -y nodejs
 
-ENV PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
-RUN npm install playwright@1.53.0 -g
-RUN npx playwright@1.53.0 install
+
+
 
 
 # Use the entrypoint script

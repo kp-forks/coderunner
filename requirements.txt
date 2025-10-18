@@ -50,6 +50,10 @@ statsmodels
 matplotlib
 seaborn
 
+# Image/Video I/O Libraries
+imageio
+imageio-ffmpeg
+
 # File Processing Libraries
 pyarrow
 openpyxl
