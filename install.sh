@@ -57,7 +57,7 @@ echo "Running: sudo container system dns create local"
 sudo container system dns create local
 
 echo "Running: container system dns default set local"
-container system dns default set local
+container system property set dns.domain local
 
 echo "Starting the Sandbox Container..."
 container system start
