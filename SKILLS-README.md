@@ -26,6 +26,7 @@
 }
 ```
 
+ And for system instructions, replace the `~/.gemini/GEMINI.md` with the [GEMINI.md](https://github.com/instavm/coderunner/examples/gemini/GEMINI.md)
 
 
 # How To Add New Skills
