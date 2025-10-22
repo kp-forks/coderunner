@@ -19,7 +19,7 @@ else
   echo "✅ macOS system detected."
 fi
 
-download_url="https://github.com/apple/container/releases/download/0.3.0/container-0.3.0-installer-signed.pkg"
+download_url="https://github.com/apple/container/releases/download/0.5.0/container-0.5.0-installer-signed.pkg"
 
 # Check if container is installed and display its version
 if command -v container &> /dev/null
@@ -57,7 +57,7 @@ echo "Running: sudo container system dns create local"
 sudo container system dns create local
 
 echo "Running: container system dns default set local"
-container system dns default set local
+container system property set dns.domain local
 
 echo "Starting the Sandbox Container..."
 container system start
@@ -66,12 +66,21 @@ container system start
 echo "Pulling the latest image: instavm/coderunner"
 container image pull instavm/coderunner
 
-echo "→ Ensuring coderunner assets directory…"
+echo "→ Ensuring coderunner assets directories…"
 ASSETS_SRC="$HOME/.coderunner/assets"
-mkdir -p "$ASSETS_SRC"
+mkdir -p "$ASSETS_SRC/skills/user"
+mkdir -p "$ASSETS_SRC/outputs"
 
 # Run the command to start the sandbox container
 echo "Running: container run --name coderunner --detach --rm --cpus 8 --memory 4g instavm/coderunner"
-container run  --volume "$ASSETS_SRC:/app/uploads" --name coderunner --detach --rm --cpus 8 --memory 4g instavm/coderunner
+container run \
+  --volume "$ASSETS_SRC/skills/user:/app/uploads/skills/user" \
+  --volume "$ASSETS_SRC/outputs:/app/uploads/outputs" \
+  --name coderunner \
+  --detach \
+  --rm \
+  --cpus 8 \
+  --memory 4g \
+  instavm/coderunner
 
 echo "✅ Setup complete. MCP server is available at http://coderunner.local:8222/mcp"

@@ -41,6 +41,16 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     libgbm1 \
     libxshmfence1 \
     libasound2 \
+    unzip \
+    p7zip-full \
+    bc \
+    ripgrep \
+    fd-find \
+    sqlite3 \
+    libsqlite3-dev \
+    wkhtmltopdf \
+    poppler-utils \
+    default-jre \
  && apt-get clean && rm -rf /var/lib/apt/lists/*
 
 
@@ -64,6 +74,12 @@ COPY ./server.py /app/server.py
 # Create application/jupyter directories
 RUN mkdir -p /app/uploads /app/jupyter_runtime
 
+# Copy skills directory structure into the container
+# Public skills are baked into the image
+# User skills directory is created as mount point for user-added skills
+COPY ./skills/public /app/uploads/skills/public
+RUN mkdir -p /app/uploads/skills/user
+
 # # Generate SSH host keys
 # RUN ssh-keygen -A
 
@@ -81,6 +97,16 @@ EXPOSE 8222
 # Start the FastAPI application
 # CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8002", "--workers", "1", "--no-access-log"]
 
+RUN apt-get --fix-broken install
+# Ensure Node.js, npm (and npx) are set up
+RUN curl -fsSL https://deb.nodesource.com/setup_22.x | bash -
+RUN apt-get install -y nodejs
+
+
+
+ENV PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+RUN npm install playwright@1.53.0 -g
+RUN npx playwright@1.53.0 install
 
 # Copy the entrypoint script into the image
 COPY entrypoint.sh /entrypoint.sh
@@ -88,13 +114,9 @@ COPY entrypoint.sh /entrypoint.sh
 # Make the entrypoint script executable
 RUN chmod +x /entrypoint.sh
 
-# Ensure Node.js, npm (and npx) are set up
-RUN curl -fsSL https://deb.nodesource.com/setup_22.x | bash -
-RUN apt-get install -y nodejs
 
-ENV PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
-RUN npm install playwright@1.53.0 -g
-RUN npx playwright@1.53.0 install
+
+
 
 
 # Use the entrypoint script

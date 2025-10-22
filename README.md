@@ -178,11 +178,77 @@ Code runs in an isolated container with VM-level isolation. Your host system and
 From [@apple/container](https://github.com/apple/container/blob/main/docs/technical-overview.md):
 >Each container has the isolation properties of a full VM, using a minimal set of core utilities and dynamic libraries to reduce resource utilization and attack surface.
 
+## Skills System
+
+CodeRunner includes a built-in skills system that provides pre-packaged tools for common tasks. Skills are organized into two categories:
+
+### Built-in Public Skills
+
+The following skills are included in every CodeRunner installation:
+
+- **pdf-text-replace** - Replace text in fillable PDF forms
+- **image-crop-rotate** - Crop and rotate images
+
+### Using Skills
+
+Skills are accessed through MCP tools:
+
+```python
+# List all available skills
+result = await list_skills()
+
+# Get documentation for a specific skill
+info = await get_skill_info("pdf-text-replace")
+
+# Execute a skill's script
+code = """
+import subprocess
+subprocess.run([
+    'python',
+    '/app/uploads/skills/public/pdf-text-replace/scripts/replace_text_in_pdf.py',
+    '/app/uploads/input.pdf',
+    'OLD TEXT',
+    'NEW TEXT',
+    '/app/uploads/output.pdf'
+])
+"""
+result = await execute_python_code(code)
+```
+
+### Adding Custom Skills
+
+Users can add their own skills to the `~/.coderunner/assets/skills/user/` directory:
+
+1. Create a directory for your skill (e.g., `my-custom-skill/`)
+2. Add a `SKILL.md` file with documentation
+3. Add your scripts in a `scripts/` subdirectory
+4. Skills will be automatically discovered by the `list_skills()` tool
+
+**Skill Structure:**
+```
+~/.coderunner/assets/skills/user/my-custom-skill/
+├── SKILL.md              # Documentation with usage examples
+└── scripts/              # Your Python/bash scripts
+    └── process.py
+```
+
+### Example: Using the PDF Text Replace Skill
+
+```bash
+# Inside the container, execute:
+python /app/uploads/skills/public/pdf-text-replace/scripts/replace_text_in_pdf.py \
+    /app/uploads/tax_form.pdf \
+    "John Doe" \
+    "Jane Smith" \
+    /app/uploads/tax_form_updated.pdf
+```
+
 ## Architecture
 
 CodeRunner consists of:
 - **Sandbox Container:** Isolated execution environment with Jupyter kernel
 - **MCP Server:** Handles communication between AI models and the sandbox
+- **Skills System:** Pre-packaged tools for common tasks (PDF manipulation, image processing, etc.)
 
 ## Examples
 

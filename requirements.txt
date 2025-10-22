@@ -38,3 +38,48 @@ fastmcp
 openai-agents
 
 playwright==1.53.0
+
+# Data Science Libraries
+pandas
+numpy
+scipy
+scikit-learn
+statsmodels
+
+# Visualization Libraries
+matplotlib
+seaborn
+
+# Image/Video I/O Libraries
+imageio
+imageio-ffmpeg
+
+# File Processing Libraries
+pyarrow
+openpyxl
+xlsxwriter
+xlrd
+pillow
+python-pptx
+python-docx
+pypdf
+pdfplumber
+pypdfium2
+pdf2image
+pdfkit
+tabula-py
+reportlab[pycairo]
+img2pdf
+
+# Math & Computing Libraries
+sympy
+mpmath
+
+# Utilities
+tqdm
+python-dateutil
+pytz
+joblib
+
+# Beautiful Soup for HTML parsing (already used in server.py)
+beautifulsoup4
