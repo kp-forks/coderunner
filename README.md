@@ -30,7 +30,7 @@ CodeRunner is an MCP (Model Context Protocol) server that executes AI-generated 
 git clone https://github.com/instavm/coderunner.git
 cd coderunner
 chmod +x install.sh
-sudo ./install.sh
+./install.sh
 ```
 
 MCP server will be available at: http://coderunner.local:8222/mcp
