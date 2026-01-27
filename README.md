@@ -86,7 +86,41 @@ pip install -r examples/requirements.txt
    You can now ask Claude to execute code, and it will run safely in the sandbox!
 </details>
 
-### Option 2: Python OpenAI Agents
+### Option 2: Claude Code CLI
+
+<details>
+<summary>Use CodeRunner with Claude Code CLI for terminal-based AI assistance:</summary>
+
+![Claude Code Demo](images/claude-code-demo.png)
+
+**Quick Start:**
+
+```bash
+# 1. Install and start CodeRunner (one-time setup)
+git clone https://github.com/instavm/coderunner.git
+cd coderunner
+sudo ./install.sh
+
+# 2. Install the Claude Code plugin
+claude plugin marketplace add github:BandarLabs/coderunner/instavm-coderunner-plugin
+claude plugin install instavm-coderunner@instavm-plugins
+
+# 3. Reconnect to MCP servers
+/mcp
+```
+
+That's it! Claude Code now has access to all CodeRunner tools:
+- **execute_python_code** - Run Python code in persistent Jupyter kernel
+- **navigate_and_get_all_visible_text** - Web scraping with Playwright
+- **list_skills** - List available skills (docx, xlsx, pptx, pdf, image processing, etc.)
+- **get_skill_info** - Get documentation for specific skills
+- **get_skill_file** - Read skill files and examples
+
+**Learn more:** See [instavm-coderunner-plugin/README.md](instavm-coderunner-plugin/README.md) for detailed documentation.
+
+</details>
+
+### Option 3: Python OpenAI Agents
 <details>
 <summary>Use CodeRunner with OpenAI's Python agents library:</summary>
 
@@ -106,7 +140,7 @@ pip install -r examples/requirements.txt
    Enter prompts like "write python code to generate 100 prime numbers" and watch it execute safely in the sandbox!
 </details>
 
-### Option 3: Gemini-CLI
+### Option 4: Gemini-CLI
 [Gemini CLI](https://github.com/google-gemini/gemini-cli) is recently launched by Google.
 
 <details>
@@ -132,7 +166,7 @@ pip install -r examples/requirements.txt
 ![gemini2](images/gemini2.png)
 
 
-### Option 4: Kiro by Amazon
+### Option 5: Kiro by Amazon
 [Kiro](https://kiro.dev/blog/introducing-kiro/) is recently launched by Amazon.
 
 <details>
@@ -161,7 +195,7 @@ pip install -r examples/requirements.txt
 </details>
 
 
-### Option 5: Coderunner-UI (Offline AI Workspace)
+### Option 6: Coderunner-UI (Offline AI Workspace)
 [Coderunner-UI](https://github.com/instavm/coderunner-ui) is our own offline AI workspace tool designed for full privacy and local processing.
 
 <details>
@@ -255,6 +289,10 @@ CodeRunner consists of:
 The `examples/` directory contains:
 - `openai-agents` - Example OpenAI agents integration
 - `claude-desktop` - Example Claude Desktop integration
+
+## Building Container Image Tutorial
+
+https://github.com/apple/container/blob/main/docs/tutorial.md
 
 ## Contributing
 

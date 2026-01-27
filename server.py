@@ -19,6 +19,7 @@ import websockets
 import httpx
 # Import Context for progress reporting
 from mcp.server.fastmcp import FastMCP, Context
+from mcp.server.transport_security import TransportSecuritySettings
 from playwright.async_api import async_playwright
 from bs4 import BeautifulSoup
 import socket
@@ -31,7 +32,24 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 # Initialize the MCP server with a descriptive name for the toolset
-mcp = FastMCP("CodeRunner")
+# Configure DNS rebinding protection to allow coderunner.local
+mcp = FastMCP(
+    "CodeRunner",
+    transport_security=TransportSecuritySettings(
+        enable_dns_rebinding_protection=True,
+        allowed_hosts=[
+            "localhost:*",
+            "127.0.0.1:*",
+            "coderunner.local:*",
+            "0.0.0.0:*",
+        ],
+        allowed_origins=[
+            "http://localhost:*",
+            "http://127.0.0.1:*",
+            "http://coderunner.local:*",
+        ],
+    )
+)
 
 # Kernel pool configuration
 MAX_KERNELS = 5
@@ -760,29 +778,31 @@ async def api_execute(request: Request):
             "timeout": 300  // optional, not used in local execution
         }
 
-    Response (JSON):
+    Response (JSON) - matches api.instavm.io/execute format:
         {
-            "output": "hello world\\n",
-            "status": "success"
-        }
-    or
-        {
-            "output": "",
-            "error": "error message",
-            "status": "error"
+            "stdout": "hello world\\n",
+            "stderr": "",
+            "execution_time": 0.39,
+            "cpu_time": 0.03
         }
     """
+    import time
+    start_time = time.time()
+
     try:
         # Parse request body
         body = await request.json()
-        command = body.get("command")
+
+        # SDK sends "code" field, direct API calls use "command"
+        command = body.get("code") or body.get("command")
 
         if not command:
-            return {
-                "output": "",
-                "error": "Missing 'command' field in request body",
-                "status": "error"
-            }
+            return JSONResponse({
+                "stdout": "",
+                "stderr": "Missing 'code' or 'command' field in request body",
+                "execution_time": 0.0,
+                "cpu_time": 0.0
+            }, status_code=400)
 
         # Create mock context for progress reporting
         ctx = MockContext()
@@ -790,26 +810,36 @@ async def api_execute(request: Request):
         # Execute the code
         result = await execute_python_code(command, ctx)
 
+        # Calculate execution time
+        execution_time = time.time() - start_time
+
         # Check if result contains an error
         if result.startswith("Error:"):
             return JSONResponse({
-                "output": "",
-                "error": result,
-                "status": "error"
+                "stdout": "",
+                "stderr": result,
+                "execution_time": execution_time,
+                "cpu_time": execution_time  # Approximate CPU time as execution time
             })
 
+        # For compatibility with api.instavm.io, return stdout/stderr format
+        # Since execute_python_code returns combined output, we put it all in stdout
         return JSONResponse({
-            "output": result,
-            "status": "success"
+            "stdout": result,
+            "stderr": "",
+            "execution_time": execution_time,
+            "cpu_time": execution_time  # Approximate CPU time as execution time
         })
 
     except Exception as e:
         logger.error(f"Error in /execute endpoint: {e}", exc_info=True)
+        execution_time = time.time() - start_time
         return JSONResponse({
-            "output": "",
-            "error": f"Error: {str(e)}",
-            "status": "error"
-        })
+            "stdout": "",
+            "stderr": f"Error: {str(e)}",
+            "execution_time": execution_time,
+            "cpu_time": execution_time
+        }, status_code=500)
 
 
 async def api_browser_navigate(request: Request):
@@ -925,7 +955,74 @@ async def api_browser_extract_content(request: Request):
             "error": f"Error: {str(e)}"
         })
 
+# --- SESSION MANAGEMENT ENDPOINTS FOR SDK COMPATIBILITY ---
+
+# Simple in-memory session store (for local use, sessions are lightweight)
+_session_store = {}
+_session_counter = 0
+
+
+async def api_start_session(request: Request):
+    """
+    Start a new session (compatible with InstaVM SDK).
+
+    For local execution, sessions are lightweight - we just return a session ID.
+    The SDK uses this for tracking, but locally we don't need complex session state.
+
+    Response (JSON):
+        {
+            "session_id": "session_123",
+            "status": "active"
+        }
+    """
+    global _session_counter
+    _session_counter += 1
+    session_id = f"session_{_session_counter}"
+
+    # Store session (minimal state for local use)
+    _session_store[session_id] = {
+        "status": "active",
+        "created_at": __import__('time').time()
+    }
+
+    return JSONResponse({
+        "session_id": session_id,
+        "status": "active"
+    })
+
+
+async def api_get_session(request: Request):
+    """
+    Get session status (compatible with InstaVM SDK).
+
+    Response (JSON):
+        {
+            "session_id": "session_123",
+            "status": "active"
+        }
+    """
+    # For local use, just return active status
+    return JSONResponse({
+        "session_id": "session",
+        "status": "active"
+    })
+
+
+async def api_stop_session(request: Request):
+    """
+    Stop a session (compatible with InstaVM SDK).
+
+    For local use, this is a no-op since we don't have real session state.
+    """
+    return JSONResponse({
+        "status": "stopped"
+    })
+
+
 # Add routes to the Starlette app
 app.add_route("/execute", api_execute, methods=["POST"])
+app.add_route("/v1/sessions/session", api_start_session, methods=["POST"])
+app.add_route("/v1/sessions/session", api_get_session, methods=["GET"])
+app.add_route("/v1/sessions/session", api_stop_session, methods=["DELETE"])
 app.add_route("/v1/browser/interactions/navigate", api_browser_navigate, methods=["POST"])
 app.add_route("/v1/browser/interactions/content", api_browser_extract_content, methods=["POST"])

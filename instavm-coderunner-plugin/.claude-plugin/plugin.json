@@ -1,0 +1,10 @@
+{
+  "name": "instavm-coderunner",
+  "version": "1.0.0",
+  "description": "Execute Python code in a sandboxed Apple container via local CodeRunner MCP server",
+  "author": {
+    "name": "InstaVM"
+  },
+  "homepage": "https://github.com/instavm/coderunner",
+  "license": "MIT"
+}

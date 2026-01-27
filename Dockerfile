@@ -97,12 +97,9 @@ EXPOSE 8222
 # Start the FastAPI application
 # CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8002", "--workers", "1", "--no-access-log"]
 
-RUN apt-get --fix-broken install
 # Ensure Node.js, npm (and npx) are set up
 RUN curl -fsSL https://deb.nodesource.com/setup_22.x | bash -
-RUN apt-get update \
- && apt --fix-broken install -y \
- && apt-get install -y nodejs
+RUN apt-get update && apt-get install -y nodejs
 
 
 
