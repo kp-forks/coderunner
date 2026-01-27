@@ -132,7 +132,36 @@ That's it! Claude Code now has access to all CodeRunner tools:
 
 </details>
 
-### Option 3: Python OpenAI Agents
+### Option 3: OpenCode Configuration
+
+<details>
+<summary>Configure OpenCode to use CodeRunner as an MCP server:</summary>
+
+![OpenCode Example](images/opencode-example.png)
+
+Create or edit `~/.config/opencode/opencode.json`:
+
+```json
+{
+  "$schema": "https://opencode.ai/config.json",
+  "mcp": {
+    "coderunner": {
+      "type": "remote",
+      "url": "http://coderunner.local:8222/mcp",
+      "enabled": true
+    }
+  }
+}
+```
+
+After saving the configuration:
+1. Restart OpenCode
+2. CodeRunner tools will be available automatically
+3. Start executing Python code with full access to the sandboxed environment
+
+</details>
+
+### Option 4: Python OpenAI Agents
 <details>
 <summary>Use CodeRunner with OpenAI's Python agents library:</summary>
 
@@ -152,7 +181,7 @@ That's it! Claude Code now has access to all CodeRunner tools:
    Enter prompts like "write python code to generate 100 prime numbers" and watch it execute safely in the sandbox!
 </details>
 
-### Option 4: Gemini-CLI
+### Option 5: Gemini-CLI
 [Gemini CLI](https://github.com/google-gemini/gemini-cli) is recently launched by Google.
 
 <details>
@@ -178,7 +207,7 @@ That's it! Claude Code now has access to all CodeRunner tools:
 ![gemini2](images/gemini2.png)
 
 
-### Option 5: Kiro by Amazon
+### Option 6: Kiro by Amazon
 [Kiro](https://kiro.dev/blog/introducing-kiro/) is recently launched by Amazon.
 
 <details>
@@ -207,7 +236,7 @@ That's it! Claude Code now has access to all CodeRunner tools:
 </details>
 
 
-### Option 6: Coderunner-UI (Offline AI Workspace)
+### Option 7: Coderunner-UI (Offline AI Workspace)
 [Coderunner-UI](https://github.com/instavm/coderunner-ui) is our own offline AI workspace tool designed for full privacy and local processing.
 
 <details>
