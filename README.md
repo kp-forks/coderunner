@@ -91,8 +91,6 @@ pip install -r examples/requirements.txt
 <details>
 <summary>Use CodeRunner with Claude Code CLI for terminal-based AI assistance:</summary>
 
-![Claude Code Demo](images/claude-code-demo.png)
-
 **Quick Start:**
 
 ```bash
@@ -102,12 +100,26 @@ cd coderunner
 sudo ./install.sh
 
 # 2. Install the Claude Code plugin
-claude plugin marketplace add github:BandarLabs/coderunner/instavm-coderunner-plugin
-claude plugin install instavm-coderunner@instavm-plugins
+claude plugin marketplace add https://github.com/instavm/coderunner-plugin
+claude plugin install instavm-coderunner
 
 # 3. Reconnect to MCP servers
 /mcp
 ```
+
+**Installation Steps:**
+
+1. Navigate to Plugin Marketplace:
+
+   ![Navigate to Plugin Marketplace](images/gotoplugin.png)
+
+2. Add the InstaVM repository:
+
+   ![Add InstaVM Repository](images/addrepo.png)
+
+3. Execute Python code with Claude Code:
+
+   ![Execute Python Code](images/runcode.png)
 
 That's it! Claude Code now has access to all CodeRunner tools:
 - **execute_python_code** - Run Python code in persistent Jupyter kernel
@@ -116,7 +128,7 @@ That's it! Claude Code now has access to all CodeRunner tools:
 - **get_skill_info** - Get documentation for specific skills
 - **get_skill_file** - Read skill files and examples
 
-**Learn more:** See [instavm-coderunner-plugin/README.md](instavm-coderunner-plugin/README.md) for detailed documentation.
+**Learn more:** See the [plugin repository](https://github.com/instavm/coderunner-plugin) for detailed documentation.
 
 </details>
 
