@@ -19,7 +19,7 @@ else
   echo "✅ macOS system detected."
 fi
 
-download_url="https://github.com/apple/container/releases/download/0.5.0/container-0.5.0-installer-signed.pkg"
+download_url="https://github.com/apple/container/releases/download/0.8.0/container-installer-signed.pkg"
 
 # Check if container is installed and display its version
 if command -v container &> /dev/null

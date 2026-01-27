@@ -1,0 +1,13 @@
+{
+  "name": "instavm-plugins",
+  "owner": {
+    "name": "InstaVM"
+  },
+  "plugins": [
+    {
+      "name": "instavm-coderunner",
+      "source": ".",
+      "description": "Execute Python code in a local sandboxed Apple container with fast kernel pool performance"
+    }
+  ]
+}
