@@ -102,8 +102,8 @@ cd coderunner
 sudo ./install.sh
 
 # 2. Install the Claude Code plugin
-claude plugin marketplace add github:BandarLabs/coderunner/instavm-coderunner-plugin
-claude plugin install instavm-coderunner@instavm-plugins
+claude plugin marketplace add https://github.com/instavm/coderunner-plugin
+claude plugin install instavm-coderunner
 
 # 3. Reconnect to MCP servers
 /mcp
@@ -116,7 +116,7 @@ That's it! Claude Code now has access to all CodeRunner tools:
 - **get_skill_info** - Get documentation for specific skills
 - **get_skill_file** - Read skill files and examples
 
-**Learn more:** See [instavm-coderunner-plugin/README.md](instavm-coderunner-plugin/README.md) for detailed documentation.
+**Learn more:** See the [plugin repository](https://github.com/instavm/coderunner-plugin) for detailed documentation.
 
 </details>
 
