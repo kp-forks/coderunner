@@ -40,6 +40,16 @@ MCP server will be available at: http://coderunner.local:8222/mcp
 pip install -r examples/requirements.txt
 ```
 
+## Run Claude Code inside a Sandbox
+
+`./install.sh` (if not already done)
+
+`container exec -it coderunner /bin/bash`
+
+`root@coderunner:/app# npm install -g @anthropic-ai/claude-code`
+
+<img width="741" height="410" alt="image" src="https://github.com/user-attachments/assets/620490cb-4e85-4c37-bc57-ab2fa1762c78" />
+
 ## Integration Options
 
 ### Option 1: Claude Desktop Integration
