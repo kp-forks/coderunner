@@ -5,22 +5,13 @@
 [![License](http://img.shields.io/:license-Apache%202.0-green.svg?style=flat)](https://github.com/instavm/coderunner/blob/master/LICENSE)
 </div>
 
-# CodeRunner: Run AI Generated Code Locally
+# CodeRunner: A local sandbox for your AI agents
 
-CodeRunner is an MCP (Model Context Protocol) server that executes AI-generated code in a sandboxed environment on your Mac using Apple's native [containers](https://github.com/apple/container).
+CodeRunner helps you sandbox your AI agents and its actions inside a sandbox. 
 
-**Key use case:** Process your local files (videos, images, documents, data) with remote LLMs like Claude or ChatGPT without uploading your files to the cloud. The LLM generates code that runs locally on your machine to analyze, transform, or process your files.
+**Key use case:** You can run multiple Claude Code or AI agents in our sandbox without any fear of data loss and exfilteration.
 
-## What CodeRunner Enables
 
-| Without CodeRunner | With CodeRunner |
-| :--- | :--- |
-| LLM writes code, you run it manually | LLM writes and executes code, returns results |
-| Upload files to cloud for AI processing | Files stay on your machine, processed locally |
-| Install tools and dependencies yourself | Tools available in sandbox, auto-installs others |
-| Copy/paste scripts to run elsewhere | Code runs immediately, shows output/files |
-| LLM analyzes text descriptions of files | LLM directly processes your actual files |
-| Manage Python environments and packages | Pre-configured environment ready to use |
 
 ## Quick Start
 
@@ -33,12 +24,6 @@ chmod +x install.sh
 ./install.sh
 ```
 
-MCP server will be available at: http://coderunner.local:8222/mcp
-
-**Install required packages** (use virtualenv and note the python path):
-```bash
-pip install -r examples/requirements.txt
-```
 
 ## Run Claude Code inside a Sandbox
 
@@ -50,7 +35,14 @@ pip install -r examples/requirements.txt
 
 <img width="741" height="410" alt="image" src="https://github.com/user-attachments/assets/620490cb-4e85-4c37-bc57-ab2fa1762c78" />
 
-## Integration Options
+## Other Integration Options
+
+MCP server will be available at: `http://coderunner.local:8222/mcp`
+
+**Install required packages** (use virtualenv and note the python path):
+```bash
+pip install -r examples/requirements.txt
+```
 
 ### Option 1: Claude Desktop Integration
 
@@ -209,12 +201,13 @@ After saving the configuration:
 }
 ```
 
-
-</details>
-
 ![gemini1](images/gemini1.png)
 
 ![gemini2](images/gemini2.png)
+
+</details>
+
+
 
 
 ### Option 6: Kiro by Amazon
