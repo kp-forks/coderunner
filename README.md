@@ -44,7 +44,7 @@ MCP server will be available at: `http://coderunner.local:8222/mcp`
 pip install -r examples/requirements.txt
 ```
 
-### Option 1: Claude Desktop Integration
+#### 1. Claude Desktop Integration
 
 
 <details>
@@ -88,7 +88,7 @@ pip install -r examples/requirements.txt
    You can now ask Claude to execute code, and it will run safely in the sandbox!
 </details>
 
-### Option 2: Claude Code CLI
+#### 2. Claude Code CLI
 
 <details>
 <summary>Use CodeRunner with Claude Code CLI for terminal-based AI assistance:</summary>
@@ -134,7 +134,7 @@ That's it! Claude Code now has access to all CodeRunner tools:
 
 </details>
 
-### Option 3: OpenCode Configuration
+#### 3. OpenCode Configuration
 
 <details>
 <summary>Configure OpenCode to use CodeRunner as an MCP server:</summary>
@@ -163,7 +163,7 @@ After saving the configuration:
 
 </details>
 
-### Option 4: Python OpenAI Agents
+#### 4. Python OpenAI Agents
 <details>
 <summary>Use CodeRunner with OpenAI's Python agents library:</summary>
 
@@ -183,7 +183,7 @@ After saving the configuration:
    Enter prompts like "write python code to generate 100 prime numbers" and watch it execute safely in the sandbox!
 </details>
 
-### Option 5: Gemini-CLI
+#### 5. Gemini-CLI
 [Gemini CLI](https://github.com/google-gemini/gemini-cli) is recently launched by Google.
 
 <details>
@@ -210,7 +210,7 @@ After saving the configuration:
 
 
 
-### Option 6: Kiro by Amazon
+#### 6. Kiro by Amazon
 [Kiro](https://kiro.dev/blog/introducing-kiro/) is recently launched by Amazon.
 
 <details>
@@ -239,7 +239,7 @@ After saving the configuration:
 </details>
 
 
-### Option 7: Coderunner-UI (Offline AI Workspace)
+#### 7. Coderunner-UI (Offline AI Workspace)
 [Coderunner-UI](https://github.com/instavm/coderunner-ui) is our own offline AI workspace tool designed for full privacy and local processing.
 
 <details>
@@ -338,6 +338,10 @@ The `examples/` directory contains:
 
 https://github.com/apple/container/blob/main/docs/tutorial.md
 
+## Roadmap
+1. Linux support with Firecracker
+2. Guardrails for external agentic actions
+3. CLI for Coderunner
 ## Contributing
 
 We welcome contributions! Please see [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
