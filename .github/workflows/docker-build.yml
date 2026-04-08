@@ -12,6 +12,9 @@ env:
   REGISTRY: docker.io
   IMAGE_NAME: instavm/coderunner
 
+permissions:
+  contents: read
+
 jobs:
   docker-build:
     runs-on: ubuntu-latest
