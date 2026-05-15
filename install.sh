@@ -105,7 +105,7 @@ if ! container image pull instavm/coderunner; then
 fi
 
 # Run the command to start the sandbox container
-echo "Running: container run --name coderunner --detach --cpus 8 --memory 4g instavm/coderunner"
+echo "Running: container run --volume \"$ASSETS_SRC/skills/user:/app/uploads/skills/user\" --volume \"$ASSETS_SRC/outputs:/app/uploads/outputs\" --name coderunner --detach --cpus 8 --memory 4g instavm/coderunner"
 if container run \
   --volume "$ASSETS_SRC/skills/user:/app/uploads/skills/user" \
   --volume "$ASSETS_SRC/outputs:/app/uploads/outputs" \
