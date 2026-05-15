@@ -82,12 +82,6 @@ echo "Running: container system property set dns.domain local"
 container system property set dns.domain local
 
 
-echo "Pulling the latest image: instavm/coderunner"
-if ! container image pull instavm/coderunner; then
-    echo "❌ Failed to pull image. Please check your internet connection and try again."
-    exit 1
-fi
-
 echo "→ Ensuring coderunner assets directories…"
 ASSETS_SRC="$HOME/.coderunner/assets"
 mkdir -p "$ASSETS_SRC/skills/user"
@@ -98,14 +92,25 @@ echo "Stopping any existing coderunner container..."
 container stop coderunner 2>/dev/null || true
 sleep 2
 
+echo "Trying to resume any existing coderunner container..."
+if container start coderunner 2>/dev/null; then
+    echo "✅ Setup complete. MCP server is available at http://coderunner.local:8222/mcp"
+    exit 0
+fi
+
+echo "Pulling the latest image: instavm/coderunner"
+if ! container image pull instavm/coderunner; then
+    echo "❌ Failed to pull image. Please check your internet connection and try again."
+    exit 1
+fi
+
 # Run the command to start the sandbox container
-echo "Running: container run --name coderunner --detach --rm --cpus 8 --memory 4g instavm/coderunner"
+echo "Running: container run --name coderunner --detach --cpus 8 --memory 4g instavm/coderunner"
 if container run \
   --volume "$ASSETS_SRC/skills/user:/app/uploads/skills/user" \
   --volume "$ASSETS_SRC/outputs:/app/uploads/outputs" \
   --name coderunner \
   --detach \
-  --rm \
   --cpus 8 \
   --memory 4g \
   instavm/coderunner; then
