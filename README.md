@@ -24,6 +24,26 @@ chmod +x install.sh
 ./install.sh
 ```
 
+### Stop and resume
+
+Stop the sandbox when you are done:
+
+```bash
+container stop coderunner
+```
+
+Resume the same sandbox later, preserving uploads, kernels, and installed packages:
+
+```bash
+container start coderunner
+```
+
+To start over with a clean sandbox, delete the container and run the installer again:
+
+```bash
+container delete coderunner && ./install.sh
+```
+
 
 ## Run Claude Code inside a Sandbox
 
